@@ -1,0 +1,50 @@
+{
+  "skill_name": "explain-code",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "proration-timeline",
+      "prompt": "Use the explain-code skill to walk me through the business logic of the calculateProratedCharge method in src/billing/SubscriptionService.java. The part where it slices the subscription period into segments makes my head spin.",
+      "expected_output": "A developer-facing explanation: makes clear that when a subscription changes mid-cycle, this method slices the billing period into segments by the 'plan validity window' and only charges for the segments not covered by the active plan; uses a timeline/diagram to mark the key points (activation, subscription start, subscription end, deactivation); walks one example with concrete dates (including cases where activation precedes subscription start, and where multiple consecutive plans are chained); and points out the early-return branch for 'no charge required', any side effects, the string date parsing, and edge cases like plusDays(1).",
+      "files": [],
+      "expectations": [
+        "Produces at least one diagram (saved as an .svg file under outputs, or a mermaid code block / ASCII box diagram in explanation.md) expressing the billing segments or branches",
+        "Walks through one example with concrete dates, clearly stating which segments are charged and which are free because they are covered by the active plan",
+        "Covers the 'activation time precedes subscription start' case, explaining that the gap between activation and subscription start must be billed separately",
+        "Mentions that with multiple plans (plansList.size() > 1) it carves out a separate billing segment for the gaps between adjacent plans",
+        "Translates magic values such as feePayFlag=\"T\"/no-payment-required and status into business meaning, and mentions the early return and any side effects when no charge is required",
+        "Explains business logic rather than line-by-line syntax; output keeps code identifiers verbatim"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "rule-validation-branches",
+      "prompt": "What exactly does the validateRule method in src/pricing/RuleValidationService.java check? Especially the regulated-price (regulatedPrice) part — help me make the business rules clear.",
+      "expected_output": "Explains the two kinds of validation in validateRule: (1) when the pricing type is regulatedPrice and isCustom=false (not a tenant-custom rule), it looks up the corresponding regulated rule (isCustom=true) and compares unit charge timePrice, daily cap highPrice, and free duration freeTime one by one, rejecting with the matching message on any mismatch; if no regulated rule is found, it lets the request through. (2) Uniqueness validation for the same tenantId+itemType pricing rule: reject on add if one already exists; reject on update if one exists and it is not the current record. Pairs a decision table/flowchart, gives a concrete example that gets rejected, and explains the meanings of values like regulatedPrice and the true/false of isCustom.",
+      "files": [],
+      "expectations": [
+        "Produces at least one diagram (.svg file, or mermaid/ASCII) expressing the validation branches or decision table",
+        "Distinguishes and explains the two kinds of validation: regulated-price consistency comparison (timePrice/highPrice/freeTime) and per-item-type rule uniqueness",
+        "States that the precondition for the regulated-price comparison is chargeType=regulatedPrice and isCustom=false, and that it passes straight through when no corresponding regulated rule (isCustom=true) is found",
+        "Explains how the uniqueness validation decides differently under the add vs update types (excluding the current ruleId on update)",
+        "Gives a concrete example that triggers one of the rejection messages (e.g. an input unit price that does not match the regulated price)",
+        "Translates magic values like regulatedPrice and the true/false of isCustom into business meaning; explains business logic rather than line-by-line syntax"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "pay-callback-branches",
+      "prompt": "Walk me through the updateOrderWhenPaySuccess payment-success callback in src/order/OrderService.java. The handling seems to differ across order types (top-up / subscription / standard) and item categories — help me untangle it.",
+      "expected_output": "Lays out how this payment callback branches by order type: top-up (change settlement/relationship channel and notify), subscription (mark as paid, received = billed), historical order (dataSource=legacy), and finally the standard order; within standard it branches further by item category STANDARD/PREMIUM and 'whether already completed' — completed sets PAID, not yet completed (paid in advance) sets BILLING to keep accruing. Explains the amount math: total paid = previous paid + this payment, outstanding = due − total paid. Pairs a flowchart/decision table, gives an example with concrete amounts, and translates status magic values like PAID/BILLING.",
+      "files": [],
+      "expectations": [
+        "Produces at least one diagram (.svg file, or mermaid/ASCII) expressing the branch structure by order type / item category",
+        "Explains the branching by order type: how top-up, subscription, historical order (legacy), and standard order are each handled",
+        "Explains the further branching within standard orders by item category STANDARD/PREMIUM and 'whether already completed', and the corresponding order-status changes",
+        "Explains the amount math: total paid = previous paid + this payment, outstanding = due − total paid",
+        "Gives a walkthrough example with concrete amounts (due / paid / this payment / outstanding)",
+        "Translates status magic values like PAID/BILLING and the order-type values into business meaning; explains business logic rather than line-by-line syntax"
+      ]
+    }
+  ]
+}

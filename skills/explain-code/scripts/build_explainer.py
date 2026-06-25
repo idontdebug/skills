@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble a self-contained explainer HTML page for the `explain` skill.
+"""Assemble a self-contained explainer HTML page for the `explain-code` skill.
 
 Reads the page template (assets/template.html), fills in title / subtitle / path and the body
 content fragment, and INLINES the bundled Tailwind (assets/tailwind.js) and Mermaid

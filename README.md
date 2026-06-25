@@ -11,7 +11,7 @@
 npx skills add idontdebug/skills
 
 # 只安装某个 skill
-npx skills add idontdebug/skills --skill explain
+npx skills add idontdebug/skills --skill explain-code
 
 # 查看可用的 skill
 npx skills add idontdebug/skills --list
@@ -21,11 +21,11 @@ npx skills add idontdebug/skills --list
 
 ## Skills
 
-### explain
+### explain-code
 
 按需调用的代码业务逻辑讲解器。指给它一段代码,它不会逐行复述语法,而是讲清楚这段代码在**业务上**做了什么、为什么这么做,并产出一个**自包含的 HTML 解释页**(Tailwind 样式、浅/深色、离线单文件),用具体走查例子 + 可视化图表(流程图、时序图、状态图、时间轴、决策表)来帮你建立心智模型。
 
-仅在显式调用时运行(`/explain` 或明确要求用该 skill),不会自动触发。
+仅在显式调用时运行(`/explain-code` 或明确要求用该 skill),不会自动触发。
 
 ## License
 
