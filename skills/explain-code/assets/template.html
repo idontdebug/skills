@@ -63,6 +63,9 @@
   .diagram-canvas{max-height:72vh}
   .diagram-canvas svg{transform-origin:0 0}
   .diagram .mermaid{margin:0;background:transparent;border:0;text-align:center}
+  /* Keep node labels on a single line per <br/> segment so Mermaid measures full text width and never clips it */
+  .diagram .mermaid .nodeLabel,.diagram .mermaid span.nodeLabel,.diagram .mermaid .edgeLabel{white-space:nowrap}
+  .diagram .mermaid foreignObject{overflow:visible}
   .steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:-13px;top:0;width:24px;height:24px;border-radius:9999px;background:#e0e7ff;color:#4338ca;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
   .dark .steps>li::before{background:#3730a3;color:#c7d2fe;border-color:#0f172a}
   .steps{counter-reset:st}
@@ -167,9 +170,13 @@ __CONTENT__
 
     if(window.mermaid){
       try{
-        mermaid.initialize({startOnLoad:false,theme:'default',securityLevel:'loose',flowchart:{useMaxWidth:true,htmlLabels:true},themeVariables:{fontFamily:'inherit'}});
-        var p=mermaid.run({querySelector:'.mermaid'});
-        (p&&p.then?p:Promise.resolve()).then(function(){ document.querySelectorAll('.diagram').forEach(enableZoom); });
+        var FONTS="ui-sans-serif,system-ui,-apple-system,'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB',sans-serif";
+        mermaid.initialize({startOnLoad:false,theme:'default',securityLevel:'loose',flowchart:{useMaxWidth:true,htmlLabels:true,padding:12,nodeSpacing:55,rankSpacing:55},themeVariables:{fontFamily:FONTS}});
+        // Wait for fonts so Mermaid measures label width with the final metrics (otherwise node boxes are sized too small and clip CJK/mixed text).
+        var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+        fontsReady.then(function(){ var p=mermaid.run({querySelector:'.mermaid'}); return (p&&p.then)?p:Promise.resolve(); })
+          .then(function(){ document.querySelectorAll('.diagram').forEach(enableZoom); })
+          .catch(function(){ fallbackAll(); });
       }catch(e){ fallbackAll(); }
     } else { fallbackAll(); }
   });
