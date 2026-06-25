@@ -9,6 +9,10 @@ Style with the template's predefined Tailwind component classes (defined via `@a
 short class names. You can also stack on any Tailwind utility classes as needed. **Follow the 1→8 order
 strictly.**
 
+The section headings below are placeholders. Write all visible text (headings, labels, captions) in
+the user's language, one language only, with no emojis and no bilingual `中文 / English` double
+headings. See "Write like an engineer, not an AI" in `SKILL.md`.
+
 ## JS hook conventions (must follow, or interactions break)
 - **Zoomable diagram**: `<div class="diagram"><pre class="mermaid">…</pre></div>`. The script renders
   Mermaid and automatically adds a zoom/reset toolbar. Hand-written SVG also goes inside

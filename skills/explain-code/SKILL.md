@@ -45,6 +45,40 @@ Translating syntax line by line is low value. Translate "machine language" into 
 Translate magic values into meaning (`feePayFlag = "T"` → no payment required; `status = "1"` →
 already paid), and spell out the business concepts behind the variable names.
 
+## Write like an engineer, not an AI
+
+The page should read like a senior engineer explaining the code to a colleague at a whiteboard, not
+like generated marketing copy. Readers dismiss the whole thing the moment it "smells like AI". Avoid
+these tells:
+
+- **No emojis in the page content** (💡, 🛠️, ✅, 🚀, …). The template's UI chrome is the only place
+  small icons belong; the body never uses them.
+- **One language per page, no double-barreled bilingual headings.** Write `详细逻辑拆解`, not
+  `详细逻辑拆解 / Detailed Logic Breakdown`, and never splice English words into an otherwise-Chinese
+  heading (`详细 logic 分解`). Match the user's language and stay in it.
+- **No invented buzzwords or dramatic jargon.** Don't coin terms like "需求漏斗穿透", "系统性崩溃",
+  "黄金门禁", or "语意震荡". Name things the way the codebase and a normal engineer would; if a concept
+  has no established name, describe it plainly instead of branding it.
+- **Don't over-gloss.** Keep code identifiers verbatim, but don't stamp a parenthetical translation
+  after every phrase (`触发条件 (Condition)`, `计算结果 (Result)`). Gloss a term at most once, and only
+  when it genuinely helps.
+- **Drop the hype and the exclamation marks.** No "彻底重构", "趋于完善", or "1.2x！". State what
+  happens plainly and let the facts carry the weight.
+- **Cut the filler.** No "值得注意的是", "综上所述", "总而言之", and no repeated "改进建议：" stamp on
+  every card. Lead with the substance.
+- **Vary the rhythm.** Relentless, perfectly parallel bullet lists read as machine-generated. Mix
+  short sentences with the occasional longer one, the way people actually write.
+
+Quick contrast:
+
+- ❌ AI-flavored: "**群聚惩罚 (Clustering Multiplier)** 触发！同一章节的关联缺陷形成系统性崩溃,乘以
+  1.2 倍惩罚系数。"
+- ✅ Natural: "同一章节里冒出多个同类问题时,扣分会乘以 1.2。成片的问题通常说明这块设计整体没想清楚,
+  而不是几个孤立的小疏漏。"
+
+This applies to the prose you write. Code identifiers, enum values, and real data stay exactly as they
+appear in the code.
+
 ## Workflow
 
 1. **Locate and read the target**: resolve a `file:line`, a function name, a file path, or a pasted
