@@ -111,12 +111,22 @@ appear in the code.
 | Enum branches, rule tables, parameter combinations ("what to do in each case") | **decision table / table** | Lists all cases and their handling so none are missed |
 | Time-window / period-based computation (cross-day billing, validity segmentation) | **timeline** (hand-written inline `<svg>` with colored intervals) | Draws out the intervals so overlaps/gaps are obvious |
 | Amount accumulation / interval differences / formulas (due − paid = outstanding) | **formula flow / mini flowchart** (highlight numbers with `.val`) | Drawing the formula beats describing it in prose |
-| Comparing two cases (A vs B) | **side-by-side diagrams** / comparison table | Differences sit next to each other, instantly visible |
+| Comparing two cases (A vs B) | **stacked diagrams** (one above the other) or a comparison table | Compare them stacked or in a table; never place two diagrams side by side |
 | Data transformed across layers (DTO → Entity → VO, SQL → object) | **data-flow diagram / mapping table** | How fields map and where they transform |
 
 A single piece of code may need more than one diagram (a flowchart for the branches, then a timeline
 for the time computation in one branch). But **don't draw for the sake of drawing** — simple code only
 needs one small diagram or one example.
+
+**Layout rules for diagrams:**
+
+- **Complex logic gets both a flowchart and a sequence diagram.** When the code is complex enough to
+  deserve a flowchart, add a sequence diagram as well. The flowchart shows the branching; the sequence
+  diagram shows the cross-layer / cross-service calls, their ordering, and the side effects. They
+  answer different questions, so a complex method needs both, not one or the other.
+- **Never lay diagrams out side by side.** Each diagram is its own full-width block, stacked top to
+  bottom. Cards and comparison tables may sit in a side-by-side grid; diagrams never do, because
+  shrinking a diagram into half a row clips labels and makes it unreadable.
 
 ## Generating the HTML explainer page
 

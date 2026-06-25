@@ -73,6 +73,11 @@ flowchart TD
 </section>
 ```
 
+For complex logic, follow the flowchart with a **sequence diagram** in its own `.diagram` block right
+below it (`sequenceDiagram`), so the branch logic and the cross-layer call order both get shown. Stack
+the diagrams vertically. Every diagram is a full-width block; never put two diagrams in a side-by-side
+grid (it shrinks them and clips labels).
+
 ### 5. Detailed logic breakdown (accordion: each step has business meaning + technical note)
 ```html
 <section id="detail" class="section">
@@ -150,7 +155,7 @@ flowchart TD
 - Badges: `badge badge-high|badge-med|badge-low|badge-info`.
 - Cards: `card` + `card-t` (title); metric cards `metric` + `kpi-num` + `kpi-label`; risk cards `riskcard riskcard-high|med|low`.
 - Step list: `<ol class="steps">`, highlight numbers with `<span class="val">6.00</span>`.
-- Diagram caption: `<div class="cap">`. Side by side: `grid md:grid-cols-2 gap-3`.
+- Diagram caption: `<div class="cap">`. Side-by-side grid (cards/tables only, never diagrams): `grid md:grid-cols-2 gap-3`.
 
 ## How to draw diagrams
 - Use `<pre class="mermaid">` for standard diagrams (`flowchart` / `sequenceDiagram` / `stateDiagram-v2` / `gantt`). **Always quote labels** with special characters: `A["order = paid"]`, otherwise `()=+:` will break parsing.
