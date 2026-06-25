@@ -1,0 +1,50 @@
+{
+  "skill_name": "explain",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "split-billing-timeline",
+      "prompt": "帮我解释一下 src/main/java/com/zbxsoft/parking/pay/CarRentalFeeService.java 里 rentTime 这个方法的业务逻辑，长租车那段按租期切来切去的看得我头晕。",
+      "expected_output": "一份面向开发者的讲解：说清这是长租车出场时按『长租证有效期』把停车时间切成若干计费区间、只对未被长租覆盖的区间收费；用时间轴/图把进场、长租生效、长租到期、出场几个关键点画出来；用具体日期走一个例子（含进场早于长租开始、多张长租证衔接等情况）；指出无需缴费的早返回分支与开闸/播报副作用、字符串日期解析、plusDays(1) 等边界。",
+      "files": [],
+      "expectations": [
+        "产出至少一张图（保存为 outputs 下的 .svg 文件，或 explanation.md 中的 mermaid 代码块/ASCII 框线图），用于表达计费区间或分支",
+        "用具体日期的例子走查一遍，明确指出哪些时间段收费、哪些段因被长租证覆盖而免费",
+        "覆盖『进场时间早于长租证生效日』这种情况，说明进场到长租生效之间的空档要单独计费",
+        "提到多张长租证(rentsList.size()>1)时会对相邻长租证之间的空档分别切出计费区间",
+        "把 feePayFlag=\"T\"/无需缴纳、orderStatus 等魔法值翻译成业务含义，并提到无需缴费时的早返回与开闸/播报副作用",
+        "讲的是业务逻辑而非逐行语法翻译；输出为中文且保留代码标识符原样"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "rule-validation-branches",
+      "prompt": "RuleChargeService 的 checkRule 方法（src/main/java/com/zbxsoft/parking/rulecharge/RuleChargeService.java）到底在校验什么？尤其是政府定价(goverPrice)那一段，帮我把业务规则讲清楚。",
+      "expected_output": "讲清 checkRule 的两类校验：(1) 当计费类型为 goverPrice 且 ifRule=否(非车场自定义规则)时，会去找对应的政府规则(ifRule=是)，逐项比对单位收费 timePrice、每日最高 highPrice、免费时长 freeTime，不一致就用对应文案拒绝；找不到政府规则则放行。(2) 同一 parkingId+carType 的收费规则唯一性校验：add 时已存在则拒绝，update 时存在且不是当前这条则拒绝。配决策表/流程图，给一个会被拒绝的具体例子，并解释 goverPrice、ifRule 的『是/否』等取值含义。",
+      "files": [],
+      "expectations": [
+        "产出至少一张图（.svg 文件，或 mermaid/ASCII），表达校验分支或决策表",
+        "区分并讲清两类校验：政府定价一致性比对(timePrice/highPrice/freeTime) 与 同车型规则唯一性",
+        "说明政府定价比对的前提条件是 chargeType=goverPrice 且 ifRule=否，且查不到对应政府规则(ifRule=是)时直接放行",
+        "讲清唯一性校验在 add 与 update 两种 type 下的不同判定（update 时排除当前 ruleChargeId）",
+        "给一个会触发某条拒绝文案的具体例子（如输入单价与政府定价不符）",
+        "把 goverPrice、ifRule 的是/否等魔法值翻译成业务含义；输出为中文且讲业务而非逐行语法"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "pay-callback-branches",
+      "prompt": "讲讲 OrderService.updateOrderWhenPaySuccess（src/main/java/com/zbxsoft/parking/order/OrderService.java）这个支付成功回调，不同订单类型(充值/长租/停泊)和车场类型处理逻辑好像不太一样，帮我理一理。",
+      "expected_output": "梳理这个支付回调按订单类型分流：充值(改 settlement/relationship 渠道并通知)、长租(置已支付、实收=计费)、历史订单(dataSource=zyj)，最后是普通停泊订单；停泊里再按车场类型 ROAD/SEAL 以及『是否已离场』分流——已离场置 PAID、未离场(提前支付)置 BILLING 继续计费。讲清金额计算：已付总和=原已付+本次支付，待付=应付-已付总和。配流程图/决策表，给一个带具体金额的例子，翻译 PAID/BILLING 等状态魔法值。",
+      "files": [],
+      "expectations": [
+        "产出至少一张图（.svg 文件，或 mermaid/ASCII），表达订单类型/车场类型的分支结构",
+        "讲清按订单类型的分流：充值、长租、历史订单(zyj)、普通停泊各自怎么处理",
+        "讲清停泊订单里按车场类型 ROAD/SEAL 及『是否已离场』的进一步分流，及对应的订单状态变化",
+        "解释金额计算逻辑：已付总和=原已付+本次支付，待付=应付-已付总和",
+        "给一个带具体金额(应付/已付/本次支付/待付)的走查例子",
+        "把 PAID/BILLING 等状态及订单类型魔法值翻译成业务含义；输出为中文且讲业务而非逐行语法"
+      ]
+    }
+  ]
+}

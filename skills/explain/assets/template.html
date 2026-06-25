@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<!-- 进页面前根据本地偏好定深浅色，避免闪烁 -->
+<script>try{var t=localStorage.getItem('explain-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark');}catch(e){}</script>
+<!--__TAILWIND_LIB__-->
+<script>
+  tailwind.config={darkMode:'class',theme:{extend:{colors:{brand:{
+    50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',
+    500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81'}}}}};
+</script>
+<style type="text/tailwindcss">
+  @layer components{
+    .btn{@apply inline-flex items-center gap-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer;}
+    .section{@apply max-w-6xl mx-auto px-4 sm:px-6 py-9 scroll-mt-20 border-b border-slate-100 dark:border-slate-800;}
+    .h-sec{@apply flex items-center gap-2.5 text-xl font-bold text-slate-900 dark:text-white mb-4;}
+    .h-sec .idx{@apply inline-flex items-center justify-center w-7 h-7 rounded-lg bg-brand-600 text-white text-sm;}
+    .lead{@apply text-[15px] leading-relaxed text-slate-600 dark:text-slate-300;}
+    .metric{@apply rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4;}
+    .kpi-num{@apply text-2xl font-bold text-brand-600 dark:text-brand-400;}
+    .kpi-label{@apply text-[13px] text-slate-500 dark:text-slate-400 mt-1;}
+    .card{@apply rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4;}
+    .card-t{@apply font-semibold text-slate-900 dark:text-white mb-1.5;}
+    .diagram{@apply relative rounded-xl border border-slate-200 dark:border-slate-700 bg-white p-3 my-3;}
+    .diagram-canvas{@apply overflow-hidden cursor-grab flex justify-center;}
+    .diagram-tools{@apply absolute top-2 right-2 flex gap-1 z-10;}
+    .diagram-tools button{@apply w-8 h-8 rounded-md border border-slate-300 bg-white/95 text-slate-600 hover:bg-slate-100 text-lg leading-none flex items-center justify-center cursor-pointer;}
+    .cap{@apply text-[13px] text-slate-500 dark:text-slate-400 mt-2 text-center;}
+    .badge{@apply inline-block rounded px-2 py-0.5 text-xs font-semibold align-middle;}
+    .badge-high{@apply bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300;}
+    .badge-med{@apply bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300;}
+    .badge-low{@apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300;}
+    .badge-info{@apply bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300;}
+    .acc{@apply rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 mb-2.5 overflow-hidden;}
+    .acc>summary{@apply cursor-pointer select-none px-4 py-3 font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700/40 marker:content-[''];}
+    .acc>summary::after{@apply ml-auto text-slate-400 transition-transform content-['▸'];}
+    .acc[open]>summary::after{@apply rotate-90;}
+    .acc-body{@apply px-4 pb-4 pt-1 text-[14px] text-slate-600 dark:text-slate-300;}
+    .riskcard{@apply rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 border-l-4;}
+    .riskcard-high{@apply border-l-red-500;} .riskcard-med{@apply border-l-amber-500;} .riskcard-low{@apply border-l-emerald-500;}
+    .callout{@apply rounded-lg border p-3 my-3 text-[14px];}
+    .callout-note{@apply border-brand-200 bg-brand-50 text-slate-700 dark:bg-brand-900/20 dark:border-brand-800 dark:text-slate-200;}
+    .callout-warn{@apply border-amber-200 bg-amber-50 text-slate-700 dark:bg-amber-900/20 dark:border-amber-800 dark:text-slate-200;}
+    .callout-ok{@apply border-emerald-200 bg-emerald-50 text-slate-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-slate-200;}
+    .ctag{@apply font-semibold block mb-1;}
+    .tbl{@apply w-full text-[13.5px] border-collapse;}
+    .tbl th{@apply text-left font-semibold bg-slate-100 dark:bg-slate-700/60 px-3 py-2 border-b border-slate-200 dark:border-slate-600;}
+    .tbl td{@apply px-3 py-2 border-b border-slate-100 dark:border-slate-700/70 align-top;}
+    .tbl tbody tr:hover{@apply bg-slate-50 dark:bg-slate-700/30;}
+    .chip{@apply inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1 text-[13px];}
+    .chip b{@apply text-brand-600 dark:text-brand-400 font-bold;}
+    .steps{@apply list-none p-0 m-0;}
+    .steps>li{@apply relative pl-8 pb-3 ml-3 border-l-2 border-slate-200 dark:border-slate-700 last:border-l-transparent;}
+    .val{@apply font-mono bg-slate-100 dark:bg-slate-700 rounded px-1.5 py-0.5 text-[13px];}
+  }
+</style>
+<style>
+  html{scroll-behavior:smooth}
+  body code{background:rgba(99,102,241,.1);padding:.1em .35em;border-radius:4px}
+  .diagram-canvas{max-height:72vh}
+  .diagram-canvas svg{transform-origin:0 0}
+  .diagram .mermaid{margin:0;background:transparent;border:0;text-align:center}
+  .steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:-13px;top:0;width:24px;height:24px;border-radius:9999px;background:#e0e7ff;color:#4338ca;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+  .dark .steps>li::before{background:#3730a3;color:#c7d2fe;border-color:#0f172a}
+  .steps{counter-reset:st}
+  /* 右侧固定目录：仅在足够宽的屏幕显示，避免与居中正文重叠 */
+  #section-toc{position:fixed;top:50%;right:.75rem;transform:translateY(-50%);z-index:20;display:none;flex-direction:column;width:10rem;max-height:78vh;overflow:auto;padding:.75rem;border-radius:.85rem;border:1px solid rgb(226 232 240);background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 8px 24px -8px rgba(0,0,0,.15)}
+  .dark #section-toc{border-color:rgb(51 65 85);background:rgba(30,41,59,.92)}
+  .toc-title{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgb(148 163 184);margin:0 .25rem .5rem}
+  .toc-list{display:flex;flex-direction:column;gap:.125rem}
+  .toc-list a{display:block;padding:.3rem .5rem;border-radius:.5rem;font-size:13px;line-height:1.3;color:rgb(100 116 139);border-left:2px solid transparent;text-decoration:none;transition:background .15s,color .15s}
+  .dark .toc-list a{color:rgb(148 163 184)}
+  .toc-list a:hover{background:rgb(241 245 249);color:rgb(79 70 229)}
+  .dark .toc-list a:hover{background:rgb(51 65 85);color:rgb(165 180 252)}
+  .toc-list a.active{background:rgb(238 242 255);color:rgb(79 70 229);font-weight:600;border-left-color:rgb(79 70 229)}
+  .dark .toc-list a.active{background:rgba(67,56,202,.28);color:rgb(165 180 252);border-left-color:rgb(129 140 248)}
+  @media (min-width:1440px){#section-toc{display:flex}}
+  @media print{
+    #section-toc{display:none !important}
+    .no-print{display:none !important}
+    .acc-body{display:block !important}
+    .section{break-inside:avoid;border:0}
+    .diagram-canvas{max-height:none}
+    .tbl th{position:static}
+    body{background:#fff !important}
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 antialiased">
+
+<!-- 1. 顶部导航栏 -->
+<header class="no-print sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+    <span class="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-lg bg-brand-600 text-white text-xs font-bold">EX</span>
+    <div class="min-w-0">
+      <div class="font-bold text-slate-900 dark:text-white text-sm leading-tight truncate">__TITLE__</div>
+      <code class="block text-[11px] text-slate-400 truncate">__PATH__</code>
+    </div>
+    <div class="ml-auto flex items-center gap-2">
+      <button id="theme-toggle" class="btn shrink-0" title="深色 / 浅色">🌓</button>
+      <button id="export-pdf" class="btn shrink-0" title="导出 PDF（打印）">⬇ PDF</button>
+    </div>
+  </div>
+</header>
+
+<main>
+__CONTENT__
+</main>
+
+<!-- 右侧目录（宽屏固定显示，带滚动高亮锚点） -->
+<aside id="section-toc" class="no-print" aria-label="目录">
+  <div class="toc-title">目录</div>
+  <nav id="section-toc-list" class="toc-list"></nav>
+</aside>
+
+<footer class="no-print max-w-6xl mx-auto px-4 sm:px-6 py-8 text-[13px] text-slate-400">
+  由 <code>explain</code> skill 生成 · 离线自包含单文件 · 讲解基于实际代码，示例数值如有假设已在文中标注。
+</footer>
+
+<!--__MERMAID_LIB__-->
+<script>
+(function(){
+  var root=document.documentElement, KEY='explain-theme';
+  function ready(fn){ if(document.readyState!=='loading')fn(); else document.addEventListener('DOMContentLoaded',fn); }
+  ready(function(){
+    var tg=document.getElementById('theme-toggle');
+    tg&&tg.addEventListener('click',function(){ var d=root.classList.toggle('dark'); try{localStorage.setItem(KEY,d?'dark':'light');}catch(e){} });
+    var ep=document.getElementById('export-pdf');
+    ep&&ep.addEventListener('click',function(){ document.querySelectorAll('details').forEach(function(d){d.open=true;}); window.print(); });
+
+    var toc=document.getElementById('section-toc-list');
+    if(toc){
+      var links={}, secs=[].slice.call(document.querySelectorAll('main section[id]'));
+      secs.forEach(function(s){
+        var h=s.querySelector('h2'); if(!h)return;
+        var a=document.createElement('a'); a.href='#'+s.id;
+        a.textContent=h.textContent.replace(/^\s*[0-9]+[.、]?\s*/,'');
+        toc.appendChild(a); links[s.id]=a;
+      });
+      // 滚动高亮：哪个区块进入视口上部就点亮对应目录项
+      if('IntersectionObserver' in window){
+        var spy=new IntersectionObserver(function(entries){
+          entries.forEach(function(en){
+            if(!en.isIntersecting)return;
+            var cur=links[en.target.id]; if(!cur)return;
+            Object.keys(links).forEach(function(k){links[k].classList.remove('active');});
+            cur.classList.add('active');
+          });
+        },{rootMargin:'-15% 0px -75% 0px',threshold:0});
+        secs.forEach(function(s){ if(links[s.id]) spy.observe(s); });
+      }
+      // 点击平滑滚动（html 已设 scroll-behavior:smooth，区块有 scroll-mt 偏移）
+      toc.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a)a.blur(); });
+    }
+
+    document.querySelectorAll('[data-rules]').forEach(function(box){
+      var s=box.querySelector('[data-rules-search]'), f=box.querySelector('[data-rules-filter]'),
+          rows=[].slice.call(box.querySelectorAll('tbody tr'));
+      function run(){ var q=((s&&s.value)||'').trim().toLowerCase(), fv=f?f.value:'all';
+        rows.forEach(function(r){ var t=r.textContent.toLowerCase(), rk=r.getAttribute('data-risk')||'';
+          r.style.display=((!q||t.indexOf(q)>=0)&&(fv==='all'||rk===fv))?'':'none'; }); }
+      s&&s.addEventListener('input',run); f&&f.addEventListener('change',run);
+    });
+
+    if(window.mermaid){
+      try{
+        mermaid.initialize({startOnLoad:false,theme:'default',securityLevel:'loose',flowchart:{useMaxWidth:true,htmlLabels:true},themeVariables:{fontFamily:'inherit'}});
+        var p=mermaid.run({querySelector:'.mermaid'});
+        (p&&p.then?p:Promise.resolve()).then(function(){ document.querySelectorAll('.diagram').forEach(enableZoom); });
+      }catch(e){ fallbackAll(); }
+    } else { fallbackAll(); }
+  });
+  function fallbackAll(){ document.querySelectorAll('.mermaid').forEach(function(el){ if(el.dataset.fb)return; el.dataset.fb='1';
+    var n=document.createElement('div'); n.className='callout callout-warn'; n.innerHTML='<span class="ctag">图未渲染</span>Mermaid 未加载，下方为图源码。'; el.parentNode.insertBefore(n,el); }); }
+  function enableZoom(d){
+    var svg=d.querySelector('svg'); if(!svg||d.dataset.zoom)return; d.dataset.zoom='1';
+    var scale=1,tx=0,ty=0,drag=false,ox=0,oy=0;
+    var canvas=document.createElement('div'); canvas.className='diagram-canvas';
+    svg.parentNode.insertBefore(canvas,svg); canvas.appendChild(svg);
+    function apply(){ svg.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')'; }
+    function zoom(f){ scale=Math.min(6,Math.max(0.3,scale*f)); apply(); }
+    var bar=document.createElement('div'); bar.className='diagram-tools no-print';
+    bar.innerHTML='<button type="button" data-z="in" title="放大">+</button><button type="button" data-z="out" title="缩小">−</button><button type="button" data-z="reset" title="重置">↻</button>';
+    d.appendChild(bar);
+    bar.addEventListener('click',function(e){ var z=e.target.getAttribute('data-z'); if(!z)return; if(z==='in')zoom(1.25); else if(z==='out')zoom(0.8); else {scale=1;tx=0;ty=0;apply();} });
+    canvas.addEventListener('wheel',function(e){ e.preventDefault(); zoom(e.deltaY<0?1.1:0.9); },{passive:false});
+    canvas.addEventListener('pointerdown',function(e){ drag=true; ox=e.clientX-tx; oy=e.clientY-ty; canvas.style.cursor='grabbing'; try{canvas.setPointerCapture(e.pointerId);}catch(_){} });
+    canvas.addEventListener('pointermove',function(e){ if(!drag)return; tx=e.clientX-ox; ty=e.clientY-oy; apply(); });
+    canvas.addEventListener('pointerup',function(){ drag=false; canvas.style.cursor='grab'; });
+    canvas.addEventListener('pointerleave',function(){ drag=false; canvas.style.cursor='grab'; });
+    apply();
+  }
+})();
+</script>
+</body>
+</html>
