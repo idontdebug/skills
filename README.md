@@ -27,6 +27,10 @@ npx skills add idontdebug/skills --list
 
 仅在显式调用时运行(`/explain-code` 或明确要求用该 skill),不会自动触发。
 
+### story-test
+
+为 Vue 3 + Vite 项目配置 Storybook + Vitest addon,并为组件编写带 `play` 断言的 **stories**,在真实浏览器里逐个状态地验证 UI 行为(每个状态在侧边栏直接显示通过/失败)。适用于:测试 Vue 组件、验证输入框/按钮/表单是否正常、覆盖边界情况(空值、超长文本、纯空白、特殊字符、禁用态)、接入 Storybook、编写 stories、搭建组件/交互测试——即使你没提到 "Storybook" 也会触发。
+
 ## License
 
 [MIT](./LICENSE)

@@ -1,5 +1,5 @@
 ---
-name: vue-storybook-tests
+name: story-test
 description: >
   Set up Storybook + the Vitest addon in a Vue 3 (Vite) project and write
   component "stories" with play-function assertions so UI behavior is verified
