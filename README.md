@@ -31,6 +31,12 @@ npx skills add idontdebug/skills --list
 
 为 Vue 3 + Vite 项目配置 Storybook + Vitest addon,并为组件编写带 `play` 断言的 **stories**,在真实浏览器里逐个状态地验证 UI 行为(每个状态在侧边栏直接显示通过/失败)。适用于:测试 Vue 组件、验证输入框/按钮/表单是否正常、覆盖边界情况(空值、超长文本、纯空白、特殊字符、禁用态)、接入 Storybook、编写 stories、搭建组件/交互测试——即使你没提到 "Storybook" 也会触发。
 
+### adversarial-review
+
+用对抗性思维审查规格类文档(OpenSpec change proposal、设计文档、PRD、RFC)。读完文档后列出关键决策/假设/现状声称的清单,逐条用**假设挖掘、失败场景构造、反方案/魔鬼代言人、歧义遗漏检测**四种手法找茬,有代码库时会用 Grep/Read 交叉核实文档里关于"现状"的声称,再回头自我验证过滤掉纯粹为挑刺而挑刺的伪问题,最后把站得住脚的发现按严重度排序输出。只读,不会帮你改文档。
+
+仅在显式调用时运行(明确要求做对抗性/红队审查),不会在你写文档时自动触发。
+
 ## License
 
 [MIT](./LICENSE)
