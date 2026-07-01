@@ -109,17 +109,29 @@ contradicts.
 
 Go back through every candidate finding from stages 2–3 and ask: is this actually grounded, or did I
 manufacture it just to have something to say? Adversarial review has an inherent failure mode — picking
-fights for their own sake — and this stage is the gate against it. For each surviving finding, decide:
+fights for their own sake — and this stage is the gate against it. For each surviving finding, decide
+two independent things:
 
-- `CONFIRMED` — grounded in the document's actual text or a concrete contradiction with the code
-- `PLAUSIBLE` — a real concern, reasoned but not airtight, still worth the author's attention
+- **Verdict** — `CONFIRMED` (grounded in the document's actual text or a concrete contradiction with
+  the code) or `PLAUSIBLE` (a real concern, reasoned but not airtight, still worth the author's
+  attention).
+- **Severity** — based on the actual blast radius you just established, not on how interesting the
+  finding felt to write:
+  - `Blocker` — a primary, user-facing capability the document promises is completely broken, or the
+    defect causes data corruption / data reaching the wrong party.
+  - `High` — wrong behavior on a common path with no safeguard or error surfaced, but not the primary
+    promised capability, or a workaround exists.
+  - `Medium` — a real problem but confined to an edge case, a narrow caller, or a contract/doc
+    inconsistency without immediate runtime breakage.
+  - `Low` — cosmetic or documentation-only mismatch with no behavioral consequence.
 
-Discard anything that doesn't clear this bar. Precision over volume: a short list of findings that all
-land is worth more than a long list padded with speculative nitpicks.
+Discard anything that doesn't clear the verdict bar. Precision over volume: a short list of findings
+that all land is worth more than a long list padded with speculative nitpicks.
 
 ### 5. Rank and report
 
-Order the surviving findings most-severe-first and report them with `ReportFindings`.
+Order the surviving findings by severity (`Blocker` → `High` → `Medium` → `Low`) and report them with
+`ReportFindings`.
 
 There's no adjustable effort/verbosity tier for this skill (unlike `code-review`'s low/medium/high).
 The bar is fixed: every finding must trace back to specific document text or a specific contradiction
@@ -127,17 +139,29 @@ with the code, and must have survived stage 4.
 
 ## Reporting findings
 
-Call `ReportFindings` once, with fields mapped like this:
+`ReportFindings` has no dedicated severity or evidence field — both have to live inside `summary` and
+`failure_scenario`. Don't let the fixed schema become an excuse to write a one-line abstract conclusion;
+a finding a reader can't independently check by looking at the cited line is not done yet. Call
+`ReportFindings` once, with fields mapped like this:
 
 - `file` → the actual document the finding came from (when reviewing multiple files, each finding
   points at its real source file, never the directory)
 - `line` → the document line the finding anchors to; if a finding spans a whole section or is about
   something the document never mentions at all, point at the most relevant line (e.g. a section
   heading) rather than forcing an artificial line number
-- `summary` → one sentence naming the defect
-- `failure_scenario` → the concrete scenario or counter-example this skill exists to produce — must be
-  specific ("if two clients hit this endpoint concurrently during migration, X happens") not vague
-  ("this could be risky")
+- `summary` → one sentence naming the defect, prefixed with its stage-4 severity tag:
+  `[Blocker] ...`, `[High] ...`, `[Medium] ...`, `[Low] ...`
+- `failure_scenario` → three parts, always present and in this order, don't blur them into one vague
+  sentence:
+  1. **Evidence** — quote the exact document text the claim rests on (with its line), and when
+     cross-checked against code, quote the exact contradicting code (with file:line). Paraphrasing away
+     the specifics defeats the point — the reader should be able to verify the finding without re-doing
+     your research.
+  2. **Mechanism** — the concrete situation that triggers the problem ("if two clients hit this endpoint
+     concurrently during migration, X happens"), not an abstract restatement of the evidence.
+  3. **Blast radius** — who or what is actually affected: which caller, which user segment, which
+     downstream system, how often this path is hit. Never settle for "this could be risky" — name the
+     actual exposure, or say plainly if it's narrow.
 - `verdict` → `CONFIRMED` or `PLAUSIBLE` per stage 4
 
 ## Relationship to other skills
